@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
 import { getProductById } from '../services/api';
 import styled from 'styled-components';
 
@@ -208,9 +207,8 @@ const QuantityDisplay = styled.span`
   color: #2c3e50;
 `;
 
-const ProductDetail = () => {
+const ProductDetail = ({ addToCart }) => {
   const { id } = useParams();
-  const { addToCart } = useCart();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
@@ -231,9 +229,7 @@ const ProductDetail = () => {
   }, [id]);
 
   const handleAddToCart = () => {
-    for (let i = 0; i < quantity; i++) {
-      addToCart(product);
-    }
+    addToCart(product, quantity);
     setQuantity(1);
   };
 

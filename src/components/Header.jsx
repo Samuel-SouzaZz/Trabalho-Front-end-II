@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
 import styled from 'styled-components';
 
 const HeaderContainer = styled.header`
@@ -209,10 +208,17 @@ const MobileNav = styled.div`
   }
 `;
 
-const Header = () => {
-  const { getCartItemsCount } = useCart();
+const Header = ({ cartItemCount }) => {
   const location = useLocation();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
 
   const isActive = (path) => location.pathname === path;
 
@@ -236,35 +242,27 @@ const Header = () => {
           </NavLink>
           <CartLink to="/carrinho" $isActive={isActive('/carrinho')}>
             <CartIcon>🛒</CartIcon>
-            Carrinho
-            {getCartItemsCount() > 0 && (
-              <CartBadge>
-                {getCartItemsCount()}
-              </CartBadge>
-            )}
+            <span>Carrinho</span>
+            {cartItemCount > 0 && <CartBadge>{cartItemCount}</CartBadge>}
           </CartLink>
         </Nav>
 
-        <MobileMenuButton onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+        <MobileMenuButton onClick={toggleMobileMenu}>
           ☰
         </MobileMenuButton>
       </Container>
 
-      <MobileNav $isOpen={mobileMenuOpen}>
-        <NavLink to="/" $isActive={isActive('/')} onClick={() => setMobileMenuOpen(false)}>
+      <MobileNav $isOpen={isMobileMenuOpen}>
+        <NavLink to="/" $isActive={isActive('/')} onClick={closeMobileMenu}>
           🏠 Home
         </NavLink>
-        <NavLink to="/produtos" $isActive={isActive('/produtos')} onClick={() => setMobileMenuOpen(false)}>
+        <NavLink to="/produtos" $isActive={isActive('/produtos')} onClick={closeMobileMenu}>
           👕 Produtos
         </NavLink>
-        <CartLink to="/carrinho" $isActive={isActive('/carrinho')} onClick={() => setMobileMenuOpen(false)}>
+        <CartLink to="/carrinho" $isActive={isActive('/carrinho')} onClick={closeMobileMenu}>
           <CartIcon>🛒</CartIcon>
-          Carrinho
-          {getCartItemsCount() > 0 && (
-            <CartBadge>
-              {getCartItemsCount()}
-            </CartBadge>
-          )}
+          <span>Carrinho</span>
+          {cartItemCount > 0 && <CartBadge>{cartItemCount}</CartBadge>}
         </CartLink>
       </MobileNav>
     </HeaderContainer>

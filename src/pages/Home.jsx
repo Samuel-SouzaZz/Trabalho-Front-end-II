@@ -295,7 +295,7 @@ const NewsletterButton = styled.button`
   }
 `;
 
-const Home = () => {
+const Home = ({ addToCart }) => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -395,14 +395,12 @@ const Home = () => {
         <Container>
           <SectionTitle>Produtos em Destaque</SectionTitle>
           {loading ? (
-            <div style={{ textAlign: 'center', padding: '2rem' }}>
-              Carregando produtos...
-            </div>
+            <p>Carregando produtos...</p>
           ) : (
             <>
               <ProductsGrid>
                 {featuredProducts.map(product => (
-                  <ProductCard key={product.id} product={product} />
+                  <ProductCard key={product.id} product={product} addToCart={addToCart} />
                 ))}
               </ProductsGrid>
               <ButtonContainer>

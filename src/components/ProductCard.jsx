@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
 import styled from 'styled-components';
 
 const Card = styled.div`
@@ -166,9 +165,7 @@ const AddButton = styled.button`
   }
 `;
 
-const ProductCard = ({ product }) => {
-  const { addToCart } = useCart();
-
+const ProductCard = ({ product, addToCart }) => {
   const handleAddToCart = () => {
     addToCart(product);
   };

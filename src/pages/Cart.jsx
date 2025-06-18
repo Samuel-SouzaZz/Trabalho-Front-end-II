@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
 import styled from 'styled-components';
 
 const CartContainer = styled.div`
@@ -269,24 +268,6 @@ const Button = styled.button`
   font-size: 1rem;
 `;
 
-const PrimaryButton = styled(Button)`
-  background-color: #3498db;
-  color: white;
-
-  &:hover {
-    background-color: #2980b9;
-  }
-`;
-
-const SecondaryButton = styled(Button)`
-  background-color: #95a5a6;
-  color: white;
-
-  &:hover {
-    background-color: #7f8c8d;
-  }
-`;
-
 const DangerButton = styled(Button)`
   background-color: #e74c3c;
   color: white;
@@ -294,11 +275,6 @@ const DangerButton = styled(Button)`
   &:hover {
     background-color: #c0392b;
   }
-`;
-
-const SmallButton = styled(Button)`
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
 `;
 
 const LargeButton = styled(Button)`
@@ -317,69 +293,78 @@ const CheckoutButton = styled(LargeButton)`
   }
 `;
 
-const ContinueButton = styled(LargeButton)`
-  background-color: #95a5a6;
-  color: white;
-  text-decoration: none;
+const ClearCartButton = styled(Button)`
+  background-color: transparent;
+  color: #e74c3c;
+  width: 100%;
+  text-align: center;
+  margin-top: 1rem;
+  border: 1px solid #e74c3c;
 
   &:hover {
-    background-color: #7f8c8d;
+    background-color: #e74c3c;
+    color: white;
   }
 `;
 
-const EmptyCart = styled.div`
+const EmptyCartContainer = styled.div`
   text-align: center;
-  padding: 4rem 2rem;
+  padding: 4rem;
   background: white;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    margin-bottom: 1rem;
+    color: #333;
+  }
 
   p {
-    font-size: 1.2rem;
-    color: #666;
     margin-bottom: 2rem;
+    color: #666;
   }
 `;
 
-const Cart = () => {
-  const { 
-    cartItems, 
-    removeFromCart, 
-    updateQuantity, 
-    getCartTotal, 
-    clearCart 
-  } = useCart();
+const ContinueShoppingButton = styled(Link)`
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 15px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
 
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  }
+`;
+
+const Cart = ({ cartItems, updateQuantity, removeFromCart, clearCart, cartTotal }) => {
   const handleQuantityChange = (productId, newQuantity) => {
-    if (newQuantity < 1) return;
     updateQuantity(productId, newQuantity);
   };
 
   const handleRemoveItem = (productId) => {
-    if (window.confirm('Tem certeza que deseja remover este item do carrinho?')) {
-      removeFromCart(productId);
-    }
+    removeFromCart(productId);
   };
 
   const handleClearCart = () => {
-    if (window.confirm('Tem certeza que deseja limpar todo o carrinho?')) {
-      clearCart();
-    }
+    clearCart();
   };
 
-  if (cartItems.length === 0) {
+  if (!cartItems || cartItems.length === 0) {
     return (
       <CartContainer>
         <Container>
-          <PageTitle>Carrinho de Compras</PageTitle>
-          <EmptyCart>
-            <p>Seu carrinho está vazio</p>
-            <Link to="/" style={{ textDecoration: 'none' }}>
-              <PrimaryButton>
-                Continuar Comprando
-              </PrimaryButton>
-            </Link>
-          </EmptyCart>
+          <PageTitle>Seu Carrinho</PageTitle>
+          <EmptyCartContainer>
+            <h2>Seu carrinho está vazio.</h2>
+            <p>Adicione produtos para vê-los aqui.</p>
+            <ContinueShoppingButton to="/produtos">
+              Continuar Comprando
+            </ContinueShoppingButton>
+          </EmptyCartContainer>
         </Container>
       </CartContainer>
     );
@@ -390,9 +375,9 @@ const Cart = () => {
       <Container>
         <CartHeader>
           <PageTitle>Carrinho de Compras</PageTitle>
-          <SmallButton as={DangerButton} onClick={handleClearCart}>
+          <DangerButton onClick={handleClearCart}>
             Limpar Carrinho
-          </SmallButton>
+          </DangerButton>
         </CartHeader>
 
         <CartContent>
@@ -427,16 +412,16 @@ const Cart = () => {
                 </ItemQuantity>
                 
                 <ItemTotal>
-                  <p>Total: R$ {(item.price * item.quantity).toFixed(2)}</p>
+                  <label>Total</label>
+                  <p>R$ {(item.price * item.quantity).toFixed(2)}</p>
                 </ItemTotal>
                 
                 <ItemActions>
-                  <SmallButton 
-                    as={DangerButton}
+                  <DangerButton 
                     onClick={() => handleRemoveItem(item.id)}
                   >
                     Remover
-                  </SmallButton>
+                  </DangerButton>
                 </ItemActions>
               </CartItem>
             ))}
@@ -446,21 +431,21 @@ const Cart = () => {
             <SummaryCard>
               <h3>Resumo do Pedido</h3>
               <SummaryLine>
-                <span>Subtotal:</span>
-                <span>R$ {getCartTotal().toFixed(2)}</span>
+                <span>Subtotal ({cartItems.reduce((acc, item) => acc + item.quantity, 0)} itens)</span>
+                <span>R$ {cartTotal.toFixed(2)}</span>
+              </SummaryLine>
+              <SummaryLine>
+                <span>Frete</span>
+                <span>Grátis</span>
               </SummaryLine>
               <SummaryLine className="total">
-                <span>Total:</span>
-                <span>R$ {getCartTotal().toFixed(2)}</span>
+                <strong>Total</strong>
+                <strong>R$ {cartTotal.toFixed(2)}</strong>
               </SummaryLine>
-              <CheckoutButton>
-                Finalizar Compra
-              </CheckoutButton>
-              <Link to="/" style={{ textDecoration: 'none' }}>
-                <ContinueButton>
-                  Continuar Comprando
-                </ContinueButton>
-              </Link>
+              <CheckoutButton>Finalizar Compra</CheckoutButton>
+              <ClearCartButton onClick={handleClearCart}>
+                Limpar Carrinho
+              </ClearCartButton>
             </SummaryCard>
           </CartSummary>
         </CartContent>

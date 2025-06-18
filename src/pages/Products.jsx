@@ -82,7 +82,7 @@ const NoProductsMessage = styled(StatusMessage)`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
-const Products = () => {
+const Products = ({ addToCart }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -148,7 +148,7 @@ const Products = () => {
 
         <ProductsGrid>
           {products.map(product => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product.id} product={product} addToCart={addToCart} />
           ))}
         </ProductsGrid>
 
