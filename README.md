@@ -208,8 +208,6 @@ http://localhost:5173
 
 **Disciplina**: Frontend  
 **Período**: 3º/4º Período  
-**Pontuação**: 15 pontos (3º período) / 5 pontos (4º período)  
-**Entrega**: 11/06 (3º período) / 18/06 (4º período)
 
 ## 🏆 Diferenciais Implementados
 
